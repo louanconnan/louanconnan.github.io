@@ -183,6 +183,8 @@ footer{background:var(--ink); color:var(--name); font-size:.88rem; padding:0 0 2
 .video-btn span{display:grid; place-items:center; width:36px; height:36px; border-radius:50%; background:var(--yellow); color:#000; font-size:.9rem; padding-left:3px}
 .video-btn:hover{background:var(--yellow); color:#000}
 .video-btn:hover span{background:#000; color:var(--yellow)}
+.video-embed{margin:0 0 20px; max-width:880px; aspect-ratio:16/9; border-radius:0 24px 24px 24px; overflow:hidden; background:#000}
+.video-embed iframe{display:block; width:100%; height:100%; border:0}
 .nextp{display:block; text-decoration:none; background:var(--yellow); color:#000; padding:clamp(36px,6vw,64px) 0; margin-top:clamp(40px,6vw,72px)}
 .nextp small{display:block; color:#000; font-weight:500; font-size:1rem; margin-bottom:8px}
 .nextp .d{font-size:clamp(2.6rem,7vw,5.4rem)}
@@ -520,7 +522,8 @@ const PROJETS = [
     ],
     note:"Le reste de la communication du tournoi est assuré par le salarié de l'association, qui organise également plus de 100 tournois en France.",
     resultats:[{n:"+1 000",l:"équipes participantes chaque année en France"},{n:"800",l:"joueuses et joueurs aux finales nationales (70 équipes, 2 jours)"},{n:"300",l:"bénévoles mobilisés sur les finales"}],
-    resultatsTexte:"Soit environ 10 000 participants par an, et plus de 2 000 spectateurs lors des finales."
+    resultatsTexte:"Soit environ 10 000 participants par an, et plus de 2 000 spectateurs lors des finales.",
+    video:{href:"https://www.youtube.com/watch?v=EC-liumhsfY",embed:"EC-liumhsfY",intro:"La dernière vidéo de l'événement.",titre:"Vidéo de La Mie Câline Basket Go",txt:"Voir la vidéo sur YouTube"}
   }
 ];
 
@@ -567,7 +570,7 @@ function renderProjet(p){
     ${secs}
     <div class="pbody"><h2>Mon implication</h2><div><ul>${p.implication.map(x=>`<li>${x}</li>`).join('')}</ul>${p.note?`<p class="extra">${p.note}</p>`:''}</div></div>
     ${p.resultats.some(r=>!r.todo) ? `<div class="pbody"><h2>Résultats</h2><div><div class="stats">${res}</div>${p.resultatsTexte?`<p class="extra">${p.resultatsTexte}</p>`:''}</div></div>` : ''}
-    ${p.video ? `<div class="pbody"><h2>La vidéo</h2><div><a class="video-btn" href="${p.video.href}" target="_blank" rel="noopener"><span aria-hidden="true">▶</span>${p.video.txt}</a></div></div>` : ''}
+    ${p.video ? `<div class="pbody"><h2>La vidéo</h2><div>${p.video.intro?`<p>${p.video.intro}</p>`:''}${p.video.embed?`<div class="video-embed"><iframe src="https://www.youtube-nocookie.com/embed/${p.video.embed}" title="${p.video.titre||p.titre}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>`:''}<a class="video-btn" href="${p.video.href}" target="_blank" rel="noopener"><span aria-hidden="true">▶</span>${p.video.txt}</a></div></div>` : ''}
   </div></article>
   <a class="nextp" href="#/projet/${next.slug}"><div class="wrap"><small>Projet suivant</small><span class="d">${next.titre}</span></div></a>`;
 }
