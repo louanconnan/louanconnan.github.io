@@ -37,8 +37,9 @@ strong,b{font-weight:600}
 .mono{font-family:var(--body); font-weight:600; font-size:1.1rem; letter-spacing:.01em; text-decoration:none; line-height:1}
 .bar nav{display:flex; gap:clamp(12px,2.4vw,28px); font-weight:500; font-size:.95rem}
 .bar nav a{text-decoration:none; padding:4px 0; border-bottom:2px solid transparent}
-.bar nav a:hover{border-color:var(--yellow)}
+.bar nav a:hover, .bar nav a[aria-current="page"]{border-color:var(--yellow)}
 @media (max-width:560px){ .bar nav a.opt{display:none} }
+@media (max-width:900px){ .bar nav .long{display:none} }
 
 /* hero */
 .hero{position:relative; padding:clamp(20px,3vw,36px) 0 clamp(32px,4vw,48px); overflow:hidden}
@@ -179,12 +180,29 @@ footer{background:var(--ink); color:var(--name); font-size:.88rem; padding:0 0 2
 .todo::before{content:"À compléter : "; color:var(--ink); font-weight:600}
 .extra{margin-top:18px}
 .extra a{font-weight:600; border-bottom:2px solid var(--yellow); text-decoration:none}
-.video-btn{display:inline-flex; align-items:center; gap:14px; background:var(--ink); color:var(--bg); text-decoration:none; font-weight:600; padding:14px 22px; border-radius:0 22px 22px 22px}
+.video-btn,.doc-btn{display:inline-flex; align-items:center; gap:14px; background:var(--ink); color:var(--bg); text-decoration:none; font-weight:600; padding:14px 22px; border-radius:0 22px 22px 22px}
 .video-btn span{display:grid; place-items:center; width:36px; height:36px; border-radius:50%; background:var(--yellow); color:#000; font-size:.9rem; padding-left:3px}
-.video-btn:hover{background:var(--yellow); color:#000}
+.video-btn:hover,.doc-btn:hover{background:var(--yellow); color:#000}
 .video-btn:hover span{background:#000; color:var(--yellow)}
 .video-embed{margin:0 0 20px; max-width:880px; aspect-ratio:16/9; border-radius:0 24px 24px 24px; overflow:hidden; background:#000}
 .video-embed iframe{display:block; width:100%; height:100%; border:0}
+/* page lettres de recommandation */
+.letter{display:grid; grid-template-columns:minmax(0,320px) minmax(0,1fr); gap:clamp(24px,4vw,56px); padding:clamp(28px,4vw,48px) 0; border-top:2px solid var(--line)}
+.letter h2{font-family:var(--display); font-weight:400; text-transform:uppercase; font-size:clamp(2.2rem,3.4vw,2.8rem); line-height:.9; margin:0}
+.letter .who{margin:8px 0 0; font-weight:500}
+.letter .when{margin:2px 0 0; color:var(--muted); font-size:.95rem}
+.letter blockquote{margin:24px 0; padding:16px 18px; background:var(--yellow); color:#000; border-radius:0 22px 22px 22px; font-weight:500; line-height:1.45}
+.letter .actions{display:flex; flex-wrap:wrap; gap:12px 20px; align-items:center}
+.letter .actions .open{font-weight:500; text-decoration:none; border-bottom:2px solid var(--yellow); padding:4px 0 2px}
+.doc-btn{border:0; cursor:pointer; font:inherit; font-weight:600}
+.doc-btn span{display:grid; place-items:center; width:36px; height:36px; border-radius:50%; background:var(--yellow); color:#000}
+.doc-btn span svg{width:18px; height:18px}
+.doc-btn:hover span{background:#000; color:var(--yellow)}
+.viewer{margin:0; border:2px solid var(--line); border-radius:0 26px 26px 26px; overflow:hidden; background:var(--soft)}
+.viewer iframe{display:block; width:100%; height:min(88vh,1100px); border:0; background:#fff}
+.viewer a{display:block}
+.viewer img{width:100%; height:auto; background:#fff}
+@media (max-width:860px){ .letter{grid-template-columns:1fr} }
 .nextp{display:block; text-decoration:none; background:var(--yellow); color:#000; padding:clamp(36px,6vw,64px) 0; margin-top:clamp(40px,6vw,72px)}
 .nextp small{display:block; color:#000; font-weight:500; font-size:1rem; margin-bottom:8px}
 .nextp .d{font-size:clamp(2.6rem,7vw,5.4rem)}
@@ -200,6 +218,7 @@ footer{background:var(--ink); color:var(--name); font-size:.88rem; padding:0 0 2
       <a class="opt" href="#/profil">Profil</a>
       <a class="opt" href="#/parcours">Parcours</a>
       <a href="#/projets">Portfolio</a>
+      <a href="#/lettres-de-recommandation">Lettres<span class="long"> de recommandation</span></a>
       <a href="#/contact">Contact</a>
     </nav>
   </div>
@@ -364,6 +383,8 @@ footer{background:var(--ink); color:var(--name); font-size:.88rem; padding:0 0 2
 
 <main id="project" hidden></main>
 
+<main id="lettres" hidden></main>
+
 <section class="block contact" id="contact">
   <div class="wrap">
     <p class="big">Me <span>contacter</span></p>
@@ -527,6 +548,18 @@ const PROJETS = [
   }
 ];
 
+/* Lettres de recommandation : pour en ajouter une, déposer le PDF (et son aperçu JPG) dans assets/lettres/ puis ajouter un objet ici. */
+const LETTRES = [
+  {
+    auteur:"Anne Rampillon", poste:"Responsable communication", structure:"Monts Fournil (La Mie Câline)",
+    date:"24 juillet 2026",
+    citation:"Je le recommande sans réserve et suis persuadée qu'il constituera un véritable atout pour son futur employeur.",
+    pdf:"assets/lettres/lettre-recommandation-anne-rampillon.pdf",
+    apercu:"assets/lettres/lettre-recommandation-anne-rampillon.jpg",
+    fichier:"Lettre-recommandation-Louan-Connan-Anne-Rampillon.pdf"
+  }
+];
+
 const esc = s => s;
 const sq = `<svg viewBox="0 0 200 200" aria-hidden="true"><path d="M180 -10 C 110 30, 190 80, 120 120 S 60 180, 130 220" stroke="currentColor" opacity=".18"/></svg>`;
 
@@ -575,19 +608,68 @@ function renderProjet(p){
   <a class="nextp" href="#/projet/${next.slug}"><div class="wrap"><small>Projet suivant</small><span class="d">${next.titre}</span></div></a>`;
 }
 
-const home = document.getElementById('home'), proj = document.getElementById('project');
+const icoDl = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>`;
+// Lecteur PDF intégré si le navigateur sait l'afficher (ordinateur), sinon aperçu image cliquable (mobile).
+const pdfInline = () => navigator.pdfViewerEnabled !== false && matchMedia('(min-width:861px)').matches;
+
+function renderLettres(){
+  const inline = pdfInline();
+  const items = LETTRES.map(l => {
+    const nom = `Lettre de recommandation de ${l.auteur}`;
+    const viewer = inline || !l.apercu
+      ? `<iframe src="${l.pdf}#navpanes=0&view=FitH" title="${nom}" loading="lazy"></iframe>`
+      : `<a href="${l.pdf}" target="_blank" rel="noopener"><img src="${l.apercu}" alt="${nom} (aperçu, toucher pour ouvrir le PDF)" loading="lazy"></a>`;
+    return `
+    <article class="letter">
+      <div>
+        <h2>${l.auteur}</h2>
+        <p class="who">${l.poste}, ${l.structure}</p>
+        ${l.date ? `<p class="when">${l.date}</p>` : ''}
+        ${l.citation ? `<blockquote>« ${l.citation} »</blockquote>` : ''}
+        <div class="actions">
+          <a class="doc-btn" href="${l.pdf}" download="${l.fichier||''}"><span>${icoDl}</span>Télécharger le PDF</a>
+          <a class="open" href="${l.pdf}" target="_blank" rel="noopener">Ouvrir dans un onglet</a>
+        </div>
+      </div>
+      <figure class="viewer">${viewer}</figure>
+    </article>`;
+  }).join('');
+  return `
+  <div class="proj"><div class="wrap">
+    <a class="back" href="#/">Retour à l'accueil</a>
+    <p class="cat">Références</p>
+    <h1>Lettres de recommandation</h1>
+    <p class="chapo" style="margin-top:clamp(24px,4vw,40px)">Ces lettres ont été rédigées par des personnes avec qui j'ai travaillé. Vous pouvez les lire directement sur cette page ou les télécharger au format PDF.</p>
+    ${items}
+  </div></div>`;
+}
+
+const home = document.getElementById('home'), proj = document.getElementById('project'), lettres = document.getElementById('lettres');
+function setActive(h){
+  document.querySelectorAll('.bar nav a').forEach(a => {
+    const t = a.getAttribute('href').replace(/^#\/?/,'');
+    if(t === h) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current');
+  });
+}
 function route(){
   const h = location.hash.replace(/^#\/?/,'');
   const m = h.match(/^projet\/(.+)$/);
+  lettres.hidden=true;
+  if(h === 'lettres-de-recommandation'){
+    lettres.innerHTML = renderLettres(); lettres.hidden=false; proj.hidden=true; home.hidden=true;
+    document.title = "Lettres de recommandation, Louan Connan";
+    setActive(h); window.scrollTo(0,0); return;
+  }
   if(m){
     const p = PROJETS.find(x=>x.slug===m[1]);
     if(p){
+      setActive('projets');
       proj.innerHTML = renderProjet(p); proj.hidden=false; home.hidden=true;
       document.title = p.titre + ", projet de Louan Connan";
       window.scrollTo(0,0); return;
     }
   }
-  proj.hidden=true; home.hidden=false; navState();
+  proj.hidden=true; home.hidden=false; navState(); setActive(h);
   document.title = "Louan Connan, chargé de projet communication";
   const target = h && document.getElementById(h);
   if(target) target.scrollIntoView(); else window.scrollTo(0,0);
