@@ -186,6 +186,22 @@ footer{background:var(--ink); color:var(--name); font-size:.88rem; padding:0 0 2
 .video-btn:hover span{background:#000; color:var(--yellow)}
 .video-embed{margin:0 0 20px; max-width:880px; aspect-ratio:16/9; border-radius:0 24px 24px 24px; overflow:hidden; background:#000}
 .video-embed iframe{display:block; width:100%; height:100%; border:0}
+/* flipbook */
+.flip{max-width:880px}
+.flip-stage{position:relative; width:100%; background:var(--soft); border-radius:0 26px 26px 26px; padding:clamp(12px,2.5vw,28px) 0; overflow:hidden}
+.flip-book{width:100%; margin:0 auto; touch-action:pan-y}
+.flip-book:focus-visible{outline:3px solid var(--yellow); outline-offset:6px}
+.flip-bar{display:flex; flex-wrap:wrap; align-items:center; gap:12px 20px; margin-top:16px}
+.flip-bar .count{font-weight:500; min-width:7.5ch; text-align:center; font-variant-numeric:tabular-nums}
+.flip-bar .btns{display:flex; gap:10px}
+.flip-bar button{width:46px; height:46px; border:2px solid var(--line); background:var(--bg); color:var(--ink); border-radius:50%; font:600 1.3rem/1 var(--body); cursor:pointer}
+.flip-bar button:hover{background:var(--yellow); color:#000; border-color:var(--yellow)}
+.flip-bar button:disabled{opacity:.3; cursor:default; background:var(--bg); color:var(--ink); border-color:var(--line)}
+.flip-bar .open{font-weight:500; text-decoration:none; border-bottom:2px solid var(--yellow); padding:4px 0 2px}
+.flip-bar .doc-btn{margin-left:auto}
+.flip-fallback{padding:20px; font-weight:500}
+@media (max-width:560px){ .flip-bar .doc-btn{margin-left:0} }
+
 /* page lettres de recommandation */
 .letter{display:grid; grid-template-columns:minmax(0,320px) minmax(0,1fr); gap:clamp(24px,4vw,56px); padding:clamp(28px,4vw,48px) 0; border-top:2px solid var(--line)}
 .letter h2{font-family:var(--display); font-weight:400; text-transform:uppercase; font-size:clamp(2.2rem,3.4vw,2.8rem); line-height:.9; margin:0}
@@ -431,6 +447,35 @@ const PROJETS = [
     resultats:[{n:"1,3 M",l:"de spectateurs simultanés au pic d'audience sur Twitch"},{n:"60 000",l:"spectateurs présents sur le circuit"}]
   },
   {
+    slug:"refonte-marque-employeur-franchise", imgCarte:"assets/projets/plaquette-franchise-carte.jpg", imgVisuel:"assets/projets/plaquette-franchise-visuel.jpg", alt:"Visuel de la plaquette franchise La Mie Câline : « Un apport seul ne concrétise pas un projet mais… l'accompagnement de notre siège favorise son lancement. »",
+    cat:"Gestion de projet, création",
+    titre:"Refonte de la marque employeur franchise", sous:"Accompagnement stratégique et déclinaison des supports",
+    carte:"Refonte stratégique et visuelle de la marque dédiée au recrutement de futurs franchisés.",
+    marque:["Marque","La Mie Câline"], periode:"2026", role:"Chargé de projet communication",
+    chapo:`Participation à la refonte stratégique et visuelle de la marque employeur dédiée au recrutement de futurs franchisés du réseau La Mie Câline, puis pilotage de la déclinaison des supports de communication issus de cette nouvelle ligne éditoriale.`,
+    sections:[
+      ["Contexte",[`Chaque année, le service communication et le service développement évaluent ensemble la pertinence de la marque employeur destinée au recrutement des franchisés. En 2026, cette analyse a conduit à engager une refonte complète, à la fois stratégique et visuelle.`,
+        `Le projet a été mené en collaboration avec l'agence Mouton Noir, retenue à l'issue d'un appel d'offres.`]],
+      ["Pourquoi ce projet",[`Le recrutement de nouveaux franchisés est un enjeu central pour le développement d'un réseau national. La marque employeur doit donc refléter fidèlement la réalité du métier de franchisé et répondre aux attentes des candidats.`,
+        `Au sein du service communication, notre rôle consistait à identifier et recueillir les besoins réels liés au déploiement de cette marque. Cette démarche collective a associé l'ensemble du service communication ainsi que les équipes du développement, afin de construire une marque au plus près du terrain.`]]
+    ],
+    implication:[
+      "Co-pilotage des réunions de recueil des besoins auprès du service développement.",
+      "Participation à la réflexion et à la relecture de l'appel d'offres adressé aux agences.",
+      "Analyse et sélection, en comité, des réponses à l'appel d'offres.",
+      "Pilotage de la déclinaison des supports de communication issus de la refonte : plaquette, supports salon, communication sur les réseaux sociaux."
+    ],
+    resultats:[],
+    flipbook:{
+      titre:"Feuilleter la plaquette",
+      intro:"Découvrez la plaquette de présentation de la franchise, conçue à partir de la nouvelle ligne éditoriale.",
+      nom:"Plaquette franchise La Mie Câline",
+      pdf:"assets/plaquette-franchise/plaquette-franchise.pdf",
+      fichier:"Plaquette-franchise-La-Mie-Caline.pdf",
+      pages:[1,2,3,4,5,6,7,8,9,10].map(n => `assets/plaquette-franchise/page-${n}.jpg`)
+    }
+  },
+  {
     slug:"djilsi-parc-asterix", imgCarte:IMG.dj.carte, imgVisuel:IMG.dj.visuel, alt:"Triporteur La Mie Câline distribuant des Cookiz aux visiteurs du Parc Astérix", annee:"",
     cat:"Campagne d'influence, événementiel",
     titre:"La Mie Câline x Djilsi", sous:"Partenariat créateur de contenu",
@@ -584,6 +629,45 @@ next.onclick=()=>track.scrollBy({left:step()});
 function navState(){ prev.disabled = track.scrollLeft < 8; next.disabled = track.scrollLeft + track.clientWidth > track.scrollWidth - 8; }
 track.addEventListener('scroll', navState, {passive:true}); window.addEventListener('resize', navState); navState();
 
+const icoDl = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>`;
+
+// Flipbook : librairie StPageFlip (MIT) hébergée dans assets/vendor, chargée uniquement à l'ouverture d'une fiche qui en a un.
+let flipLib;
+const loadFlipLib = () => flipLib || (flipLib = new Promise((ok,ko) => {
+  if(window.St) return ok();
+  const sc = document.createElement('script'); sc.src = 'assets/vendor/page-flip.browser.js';
+  sc.onload = ok; sc.onerror = () => { flipLib = null; ko(); }; document.head.appendChild(sc);
+}));
+let flipbook;
+function initFlipbook(root, p){
+  const box = root.querySelector('.flip'); if(!box || !p.flipbook) return;
+  const book = box.querySelector('.flip-book'), count = box.querySelector('.count'), stage = box.querySelector('.flip-stage');
+  const [bPrev,bNext] = ['prev','next'].map(a => box.querySelector(`[data-act=${a}]`));
+  const n = p.flipbook.pages.length;
+  loadFlipLib().then(() => {
+    if(!box.isConnected) return;
+    const pf = flipbook = new St.PageFlip(book, {
+      width:500, height:707, size:'stretch', minWidth:240, maxWidth:560, minHeight:340, maxHeight:792,
+      showCover:true, usePortrait:true, mobileScrollSupport:false, maxShadowOpacity:.35, flippingTime:700, autoSize:true
+    });
+    pf.loadFromImages(p.flipbook.pages);
+    const upd = () => {
+      const i = pf.getCurrentPageIndex(), portrait = pf.getOrientation() === 'portrait';
+      count.textContent = portrait || i === 0 || i >= n-1 ? `Page ${i+1} / ${n}` : `Pages ${i+1}-${i+2} / ${n}`;
+      bPrev.disabled = i <= 0; bNext.disabled = i >= n-1;
+    };
+    pf.on('init', upd); pf.on('flip', upd); pf.on('changeOrientation', upd); upd();
+    bPrev.onclick = () => pf.flipPrev(); bNext.onclick = () => pf.flipNext();
+    book.addEventListener('keydown', e => {
+      if(e.key === 'ArrowRight'){ pf.flipNext(); e.preventDefault(); }
+      if(e.key === 'ArrowLeft'){ pf.flipPrev(); e.preventDefault(); }
+    });
+  }).catch(() => {
+    stage.innerHTML = `<p class="flip-fallback">Le lecteur n'a pas pu se charger. <a href="${p.flipbook.pdf}" target="_blank" rel="noopener">Ouvrir la plaquette en PDF</a>.</p>`;
+    box.querySelector('.btns').hidden = true; count.hidden = true;
+  });
+}
+
 function renderProjet(p){
   const i = PROJETS.indexOf(p), next = PROJETS[(i+1)%PROJETS.length];
   const secs = p.sections.map(([t,ps]) => `<div class="pbody"><h2>${t}</h2><div>${ps.map(x=>`<p>${x}</p>`).join('')}</div></div>`).join('');
@@ -604,11 +688,22 @@ function renderProjet(p){
     <div class="pbody"><h2>Mon implication</h2><div><ul>${p.implication.map(x=>`<li>${x}</li>`).join('')}</ul>${p.note?`<p class="extra">${p.note}</p>`:''}</div></div>
     ${p.resultats.some(r=>!r.todo) ? `<div class="pbody"><h2>Résultats</h2><div><div class="stats">${res}</div>${p.resultatsTexte?`<p class="extra">${p.resultatsTexte}</p>`:''}</div></div>` : ''}
     ${p.video ? `<div class="pbody"><h2>La vidéo</h2><div>${p.video.intro?`<p>${p.video.intro}</p>`:''}${p.video.embed?`<div class="video-embed"><iframe src="https://www.youtube-nocookie.com/embed/${p.video.embed}" title="${p.video.titre||p.titre}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>`:''}<a class="video-btn" href="${p.video.href}" target="_blank" rel="noopener"><span aria-hidden="true">▶</span>${p.video.txt}</a></div></div>` : ''}
+    ${p.flipbook ? `<div class="pbody"><h2>${p.flipbook.titre}</h2><div>
+      <p>${p.flipbook.intro}</p>
+      <div class="flip" data-flip="${i}">
+        <div class="flip-stage"><div class="flip-book" tabindex="0" role="group" aria-roledescription="carrousel" aria-label="${p.flipbook.nom}, ${p.flipbook.pages.length} pages. Flèches gauche et droite pour tourner les pages."></div></div>
+        <div class="flip-bar">
+          <div class="btns"><button type="button" data-act="prev" aria-label="Page précédente">‹</button><button type="button" data-act="next" aria-label="Page suivante">›</button></div>
+          <span class="count" aria-live="polite"></span>
+          <a class="open" href="${p.flipbook.pdf}" target="_blank" rel="noopener">Ouvrir en grand</a>
+          <a class="doc-btn" href="${p.flipbook.pdf}" download="${p.flipbook.fichier||''}"><span>${icoDl}</span>Télécharger le PDF</a>
+        </div>
+      </div>
+    </div></div>` : ''}
   </div></article>
   <a class="nextp" href="#/projet/${next.slug}"><div class="wrap"><small>Projet suivant</small><span class="d">${next.titre}</span></div></a>`;
 }
 
-const icoDl = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>`;
 // Lecteur PDF intégré si le navigateur sait l'afficher (ordinateur), sinon aperçu image cliquable (mobile).
 const pdfInline = () => navigator.pdfViewerEnabled !== false && matchMedia('(min-width:861px)').matches;
 
@@ -655,6 +750,7 @@ function route(){
   const h = location.hash.replace(/^#\/?/,'');
   const m = h.match(/^projet\/(.+)$/);
   lettres.hidden=true;
+  if(flipbook){ try{ flipbook.destroy(); }catch(e){} flipbook = null; }
   if(h === 'lettres-de-recommandation'){
     lettres.innerHTML = renderLettres(); lettres.hidden=false; proj.hidden=true; home.hidden=true;
     document.title = "Lettres de recommandation, Louan Connan";
@@ -665,6 +761,7 @@ function route(){
     if(p){
       setActive('projets');
       proj.innerHTML = renderProjet(p); proj.hidden=false; home.hidden=true;
+      initFlipbook(proj, p);
       document.title = p.titre + ", projet de Louan Connan";
       window.scrollTo(0,0); return;
     }
