@@ -202,6 +202,12 @@ footer{background:var(--ink); color:var(--name); font-size:.88rem; padding:0 0 2
 .flip-fallback{padding:20px; font-weight:500}
 @media (max-width:560px){ .flip-bar .doc-btn{margin-left:0} }
 
+/* document PDF (fiche projet) */
+.doc-actions{display:flex; flex-wrap:wrap; gap:12px 20px; align-items:center}
+.doc-actions .open{font:inherit; font-weight:500; color:inherit; background:none; border:0; border-bottom:2px solid var(--yellow); border-radius:0; padding:4px 0 2px; text-decoration:none; cursor:pointer}
+.doc-info{color:var(--muted); font-size:.92rem; margin:14px 0 0}
+.doc-viewer{margin-top:24px; max-width:880px}
+
 /* page lettres de recommandation */
 .letter{display:grid; grid-template-columns:minmax(0,320px) minmax(0,1fr); gap:clamp(24px,4vw,56px); padding:clamp(28px,4vw,48px) 0; border-top:2px solid var(--line)}
 .letter h2{font-family:var(--display); font-weight:400; text-transform:uppercase; font-size:clamp(2.2rem,3.4vw,2.8rem); line-height:.9; margin:0}
@@ -590,6 +596,35 @@ const PROJETS = [
     resultats:[{n:"+1 000",l:"équipes participantes chaque année en France"},{n:"800",l:"joueuses et joueurs aux finales nationales (70 équipes, 2 jours)"},{n:"300",l:"bénévoles mobilisés sur les finales"}],
     resultatsTexte:"Soit environ 10 000 participants par an, et plus de 2 000 spectateurs lors des finales.",
     video:{href:"https://www.youtube.com/watch?v=EC-liumhsfY",embed:"EC-liumhsfY",intro:"La dernière vidéo de l'événement.",titre:"Vidéo de La Mie Câline Basket Go",txt:"Voir la vidéo sur YouTube"}
+  },
+  {
+    slug:"memoire-de-recherche", imgCarte:"assets/projets/memoire-recherche-carte.jpg", imgVisuel:"assets/projets/memoire-recherche-visuel.jpg", alt:"Visuel « Mémoire de recherche » en lettres blanches sur fond gris foncé",
+    cat:"Recherche, médias audiovisuels",
+    titre:"Mémoire de recherche", sous:"Télévision, YouTube et Twitch",
+    carte:"Télévision, YouTube et Twitch : continuité ou rupture ? Analyse de 80 vidéos et enquête auprès de 115 personnes.",
+    marque:["Établissement","Audencia SciencesCom, Nantes (alternance, promotion 2020-2022)"], periode:"2022, édition revue en 2026", role:"Auteur, sous le tutorat de Tanguy Bizien",
+    chapo:`Continuité et rupture entre le modèle télévisuel et les nouveaux modèles de consommation de contenu audiovisuel proposés par YouTube et Twitch.`,
+    sections:[
+      ["La question",[`On annonce souvent la fin de la télévision face aux plateformes vidéo. J'ai voulu vérifier si YouTube et Twitch représentent vraiment une rupture, ou s'ils prolongent en réalité les codes et les usages de la télévision.`]],
+      ["La méthode",[`J'ai croisé deux approches :`],[
+        `une analyse de 80 vidéos (60 YouTube, 20 Twitch), étudiées avec la grille des «&nbsp;promesses&nbsp;» de François Jost pour comparer leurs formats et leurs flux à ceux de la télévision&nbsp;;`,
+        `un questionnaire diffusé à l'été 2022, qui a recueilli 115 réponses, majoritairement de 16-25 ans, sur leurs pratiques de visionnage.`]],
+      ["Ce qui en ressort",[],[
+        `Les plateformes reprennent largement les formats télévisuels : reportage, talk-show, fiction, direct. Elles y ajoutent leurs propres formats, comme le vlog, l'unboxing ou le just chatting.`,
+        `La grille de programmation n'a pas disparu, elle a changé de forme. Les algorithmes de recommandation programment à la place du spectateur, qui reste en grande partie passif.`,
+        `Le rendez-vous revient : on regarde les vidéos de ses créateurs dès leur sortie, et on cale ses soirées sur les lives de ses streamers.`,
+        `La vraie différence, c'est la communauté. Le tchat, l'abonnement et l'interaction en direct font du spectateur une partie du contenu.`,
+        `La télévision ne disparaît pas : elle s'adapte, investit Twitch et YouTube, et reste pour l'instant celle qui influence le plus les plateformes.`]]
+    ],
+    resultats:[],
+    document:{
+      titre:"Lire le mémoire",
+      intro:"Relu en 2026, avec une note d'introduction sur ce qui a changé depuis, notamment la vidéo courte et l'arrivée de YouTube sur l'écran de télévision.",
+      nom:"Mémoire de recherche de Louan Connan, édition revue en 2026",
+      pdf:"assets/memoire/memoire-louan-connan-2022-revu-2026.pdf",
+      fichier:"Memoire-Louan-Connan-2022-revu-2026.pdf",
+      info:"PDF, 88 pages, 8,7 Mo"
+    }
   }
 ];
 
@@ -668,9 +703,20 @@ function initFlipbook(root, p){
   });
 }
 
+// Lecteur PDF à la demande (ordinateur) : le PDF n'est chargé qu'au clic.
+function initDoc(root, p){
+  const btn = root.querySelector('[data-act=read]'); if(!btn || !p.document) return;
+  if(!pdfInline()){ btn.hidden = true; return; }
+  btn.onclick = () => {
+    const v = root.querySelector('.doc-viewer');
+    v.innerHTML = `<iframe src="${p.document.pdf}#navpanes=0&view=FitH" title="${p.document.nom}"></iframe>`;
+    v.hidden = false; btn.hidden = true; v.scrollIntoView({behavior:'smooth', block:'nearest'});
+  };
+}
+
 function renderProjet(p){
   const i = PROJETS.indexOf(p), next = PROJETS[(i+1)%PROJETS.length];
-  const secs = p.sections.map(([t,ps]) => `<div class="pbody"><h2>${t}</h2><div>${ps.map(x=>`<p>${x}</p>`).join('')}</div></div>`).join('');
+  const secs = p.sections.map(([t,ps,lst]) => `<div class="pbody"><h2>${t}</h2><div>${ps.map(x=>`<p>${x}</p>`).join('')}${lst?`<ul>${lst.map(x=>`<li>${x}</li>`).join('')}</ul>`:''}</div></div>`).join('');
   const res = p.resultats.map(r => r.todo ? `<div class="todo">${r.todo}</div>` : `<div class="stat"><b>${r.n}</b><span>${r.l}</span></div>`).join('');
   return `
   <article class="proj"><div class="wrap">
@@ -685,9 +731,19 @@ function renderProjet(p){
     <p class="chapo">${p.chapo}</p>
     ${p.imgVisuel ? `<figure class="visual-img"><img src="${p.imgVisuel}" alt="${p.alt||""}"></figure>` : `<div class="visual">Visuel principal à insérer</div>`}
     ${secs}
-    <div class="pbody"><h2>Mon implication</h2><div><ul>${p.implication.map(x=>`<li>${x}</li>`).join('')}</ul>${p.note?`<p class="extra">${p.note}</p>`:''}</div></div>
+    ${p.implication ? `<div class="pbody"><h2>Mon implication</h2><div><ul>${p.implication.map(x=>`<li>${x}</li>`).join('')}</ul>${p.note?`<p class="extra">${p.note}</p>`:''}</div></div>` : ''}
     ${p.resultats.some(r=>!r.todo) ? `<div class="pbody"><h2>Résultats</h2><div><div class="stats">${res}</div>${p.resultatsTexte?`<p class="extra">${p.resultatsTexte}</p>`:''}</div></div>` : ''}
     ${p.video ? `<div class="pbody"><h2>La vidéo</h2><div>${p.video.intro?`<p>${p.video.intro}</p>`:''}${p.video.embed?`<div class="video-embed"><iframe src="https://www.youtube-nocookie.com/embed/${p.video.embed}" title="${p.video.titre||p.titre}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>`:''}<a class="video-btn" href="${p.video.href}" target="_blank" rel="noopener"><span aria-hidden="true">▶</span>${p.video.txt}</a></div></div>` : ''}
+    ${p.document ? `<div class="pbody"><h2>${p.document.titre}</h2><div>
+      <p>${p.document.intro}</p>
+      <div class="doc-actions">
+        <a class="doc-btn" href="${p.document.pdf}" download="${p.document.fichier||''}"><span>${icoDl}</span>Télécharger le PDF</a>
+        <a class="open" href="${p.document.pdf}" target="_blank" rel="noopener">Ouvrir dans un onglet</a>
+        <button type="button" class="open" data-act="read">Lire dans la page</button>
+      </div>
+      <p class="extra doc-info">${p.document.info}</p>
+      <figure class="viewer doc-viewer" hidden></figure>
+    </div></div>` : ''}
     ${p.flipbook ? `<div class="pbody"><h2>${p.flipbook.titre}</h2><div>
       <p>${p.flipbook.intro}</p>
       <div class="flip" data-flip="${i}">
@@ -761,7 +817,7 @@ function route(){
     if(p){
       setActive('projets');
       proj.innerHTML = renderProjet(p); proj.hidden=false; home.hidden=true;
-      initFlipbook(proj, p);
+      initFlipbook(proj, p); initDoc(proj, p);
       document.title = p.titre + ", projet de Louan Connan";
       window.scrollTo(0,0); return;
     }
